@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- In principle, each app should have unique package -->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="rs.aleph.android.example12">
+
+    <application
+        android:allowBackup="true"
+        android:label="Activities"
+        android:theme="@style/Theme.AppCompat.Light">
+
+        <!-- Declares 1st (main) activity. Action "MAIN" and category "LAUNCHER" properties makes it visible in the application launcher -->
+        <activity
+            android:name="rs.aleph.android.example12.activities.FirstActivity"
+            android:label="Activities">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- Declares 2nd activity -->
+        <activity
+            android:name=".activities.SecondActivity"
+            android:label="Activities">
+        </activity>
+
+    </application>
+
+</manifest>
