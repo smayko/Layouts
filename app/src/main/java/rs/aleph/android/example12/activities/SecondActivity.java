@@ -1,14 +1,20 @@
 package rs.aleph.android.example12.activities;
 
 import android.app.Activity;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import rs.aleph.android.example12.R;
-import rs.aleph.android.example12.activities.model.Category;
+import rs.aleph.android.example12.activities.contentProvider.CategoryProvider;
+import rs.aleph.android.example12.activities.contentProvider.MealProvider;
 import rs.aleph.android.example12.activities.model.Meal;
 
 // Each activity extends Activity class
@@ -21,6 +27,9 @@ public class SecondActivity extends Activity {
     TextView tvPrice;
     TextView tvCalories;
     ImageView ivMealImage;
+    Spinner spnMeals;
+
+    int position;
 
     // onCreate method is a lifecycle method called when he activity is starting
     @Override
@@ -31,33 +40,33 @@ public class SecondActivity extends Activity {
         // setContentView method draws UI
         setContentView(R.layout.activity_second);
         findViews();
+        position = getIntent().getExtras().getInt("position");
+        List<String> categories = CategoryProvider.getCategoryNames();
+        List<Meal> meals = MealProvider.getMeals();
 
-        String desc = getResources().getString(R.string.description);
-        String ingred = "Sour Cabbage ,Minced meat ,Salt ,Pepper";
-        String imageUri = "drawable://" + R.drawable.sarma;
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories);
+        spnMeals.setAdapter(adapter);
+        spnMeals.setSelection(meals.get(position).getCategory().getId());
 
+        tvTitle.setText(meals.get(position).getTitle());
+        tvDescription.setText(meals.get(position).getDescription());
+        tvSpices.setText(meals.get(position).getIngredients());
+        tvPrice.setText(String.valueOf(meals.get(position).getPrice() + " din"));
+        tvCalories.setText(String.valueOf(meals.get(position).getCalories() + " kcal"));
 
-        Category cat = new Category("Domestic cuisine", null);
+        switch (position) {
+            case 0:
+                ivMealImage.setImageResource(R.drawable.sarma);
+                break;
+            case 1:
+                ivMealImage.setImageResource(R.drawable.pasulj);
+                break;
 
-        Meal meal = new Meal("Sarma", cat, desc, ingred, 450, 350.99, imageUri );
-
-        int imageId = getResources().getIdentifier("sarma", "drawable", getPackageName());
-
-
-        tvTitle.setText(meal.getTitle());
-        tvDescription.setText(meal.getDescription());
-        tvCategory.setText(meal.getCategory().getName());
-        tvSpices.setText(meal.getIngredients());
-        tvPrice.setText(String.valueOf(meal.getPrice()) + " din");
-        tvCalories.setText(String.valueOf(meal.getCalories()) + " kcal");
-        ivMealImage.setImageResource(imageId);
-
-
-        // Shows a toast message (a pop-up message)
-        Toast toast = Toast.makeText(getBaseContext(), "SecondActivity.onCreate()", Toast.LENGTH_SHORT);
-        toast.show();
+            case 2:
+                ivMealImage.setImageResource(R.drawable.gulas);
+                break;
+        }
     }
-
 
 
     // onStart method is a lifecycle method called after onCreate (or after onRestart when the
@@ -117,11 +126,13 @@ public class SecondActivity extends Activity {
         Toast toast = Toast.makeText(getBaseContext(), "SecondActivity.onDestroy()", Toast.LENGTH_SHORT);
         toast.show();
     }
+
     private void findViews() {
+        spnMeals = (Spinner) findViewById(R.id.spnMeals);
         tvTitle = (TextView) findViewById(R.id.tvTitle);
         tvDescription = (TextView) findViewById(R.id.tvDescription);
         tvCategory = (TextView) findViewById(R.id.tvCategory);
-        tvSpices = (TextView) findViewById(R.id.tvTitle);
+        tvSpices = (TextView) findViewById(R.id.tvIngredients);
         tvPrice = (TextView) findViewById(R.id.tvPrice);
         tvCalories = (TextView) findViewById(R.id.tvCalories);
         ivMealImage = (ImageView) findViewById(R.id.ivMeal);

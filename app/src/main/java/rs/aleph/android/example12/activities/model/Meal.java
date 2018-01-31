@@ -6,6 +6,7 @@ package rs.aleph.android.example12.activities.model;
 
 public class Meal {
 
+    private int id;
     private String title;
     private Category category;
     private String description;
@@ -17,7 +18,8 @@ public class Meal {
     public Meal() {
     }
 
-    public Meal(String title, Category category, String description, String ingredients, int calories, double price, String image) {
+    public Meal(int id, String title, Category category, String description, String ingredients, int calories, double price, String image) {
+        this.id = id;
         this.title = title;
         this.category = category;
         this.description = description;
