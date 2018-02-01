@@ -15,7 +15,7 @@ public class Meal {
     private double price;
     private String image;
 
-    public Meal() {
+    public Meal(int i, String sarma, Category category, String s, String s1, int i1, double v) {
     }
 
     public Meal(int id, String title, Category category, String description, String ingredients, int calories, double price, String image) {

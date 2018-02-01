@@ -12,7 +12,7 @@ public class Category {
     private String name;
     private ArrayList<Meal> meals;
 
-    public Category() {
+    public Category(String s, Object o) {
     }
 
     public Category(int id, String name, ArrayList<Meal> meals) {
