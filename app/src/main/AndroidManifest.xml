@@ -10,7 +10,7 @@
 
         <!-- Declares 1st (main) activity. Action "MAIN" and category "LAUNCHER" properties makes it visible in the application launcher -->
         <activity
-            android:name="rs.aleph.android.example12.activities.FirstActivity"
+            android:name="rs.aleph.android.example12.activities.MainActivity"
             android:label="Activities">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,10 +19,6 @@
         </activity>
 
         <!-- Declares 2nd activity -->
-        <activity
-            android:name=".activities.SecondActivity"
-            android:label="Activities">
-        </activity>
 
     </application>
 
