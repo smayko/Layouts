@@ -5,4 +5,12 @@
     <string name="sarma">Sarma</string>
     <string name="description">This dish is made of sour cabbage and minced meat, it resemble of spring rolls, but much, much tastier</string>
 
+
+    <array name="titles">
+
+        <item> Settings</item>
+        <item> Settings</item>
+        <item> Settings</item>
+
+    </array>
 </resources>
