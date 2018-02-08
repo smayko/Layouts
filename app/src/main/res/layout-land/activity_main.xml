@@ -13,6 +13,10 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
         <include layout="@layout/toolbar" />
 
 
@@ -33,6 +37,8 @@
             android:layout_below="@+id/toolbar"
             android:layout_toRightOf="@+id/master_view" />
 
+        </RelativeLayout>
+
         <android.support.design.widget.NavigationView
             android:id="@+id/leftDrawer"
             android:layout_width="240dp"
@@ -44,7 +50,7 @@
 
     </LinearLayout>
 
-    <ListView android:id="@+id/left_drawer"
+    <ListView android:id="@+id/list_left_drawer"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"

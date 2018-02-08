@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:key="pref_address"
+        android:summary="Change the Addres of the restaurant"
+        android:title="Change Address" />
+
+    <Preference
+        android:key="pref_name"
+        android:summary="Change the name of the restaurant"
+        android:title="Change Name" />
+
+    <SwitchPreference
+        android:summary="Choose dark or light theme"
+        android:title="Change App Theme" />
+
+
+
+
+</PreferenceScreen>
