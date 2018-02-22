@@ -3,10 +3,14 @@
 <!-- In principle, each app should have unique package -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="rs.aleph.android.example12">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+
     <application
         android:allowBackup="true"
         android:label="Activities"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
+
 
         <!-- Declares 1st (main) activity. Action "MAIN" and category "LAUNCHER" properties makes it visible in the application launcher -->
         <activity
@@ -17,6 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".activities.async.SimpleBroadcast"></receiver>
+
+        <service android:name=".activities.async.SimpleService"></service>
 
         <!-- Declares 2nd activity -->
 

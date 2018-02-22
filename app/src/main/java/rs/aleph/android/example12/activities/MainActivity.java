@@ -1,24 +1,31 @@
 package rs.aleph.android.example12.activities;
 
+import android.app.AlertDialog;
 import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.AttributeSet;
+import android.text.Editable;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import rs.aleph.android.example12.R;
+import rs.aleph.android.example12.activities.async.SimpleBroadcast;
+import rs.aleph.android.example12.activities.async.SimpleService;
 import rs.aleph.android.example12.activities.fragments.DetailFragment;
 import rs.aleph.android.example12.activities.fragments.MasterFragment;
+import rs.aleph.android.example12.activities.tools.ReviewerTools;
 
 // Each activity extends Activity class
 public class MainActivity extends AppCompatActivity implements MasterFragment.OurClickListener {
@@ -33,6 +40,11 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
     DetailFragment detailFragment;
     MasterFragment masterFragment;
 
+    public static final String START_SYNC = "start sync";
+    public static final String COMMENTS = "comments";
+    public static final String INTERNET_CONNECTION = "internet connection";
+    public static final String MESSAGE = "comment";
+
     // onCreate method is a lifecycle method called when he activity is starting
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         listView = (NavigationView) findViewById(R.id.leftDrawer);
 
-  //      listView.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, titles));
+        //      listView.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, titles));
 
         if (findViewById(R.id.detail_view) != null) {
             landscape = true;
@@ -77,6 +89,17 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        //register BroadcastReceiver
+        SimpleBroadcast sync = new SimpleBroadcast();
+        IntentFilter intentfilter = new IntentFilter();
+        intentfilter.addAction(START_SYNC);
+        intentfilter.addAction(COMMENTS);
+        registerReceiver(sync, intentfilter);
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
@@ -89,20 +112,30 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
         switch (id) {
             case R.id.action_add:
-              //todo add item
+                //todo start service
 
-                Toast.makeText(this, "Add item" , Toast.LENGTH_SHORT).show();
+                int internetConnection = ReviewerTools.getConnectivityStatus(this);
+                Intent intent = new Intent(MainActivity.this, SimpleService.class);
+                intent.putExtra(INTERNET_CONNECTION, internetConnection);
+                startService(intent);
+
+
+                Toast.makeText(this, "Start our Service which will start Async and then Broadcast the message", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.action_delete:
-              //todo delete item
-                Toast.makeText(this, "Delete item" , Toast.LENGTH_SHORT).show();
+                //todo delete item
+                Toast.makeText(this, "Delete item", Toast.LENGTH_SHORT).show();
 
                 break;
 
             case R.id.action_edit:
-              //todo edit item
-                Toast.makeText(this, "Edit item" , Toast.LENGTH_SHORT).show();
+                //todo enter comment
+
+
+                setDialogue();
+
+                Toast.makeText(this, "Edit item", Toast.LENGTH_SHORT).show();
 
                 break;
 
@@ -132,5 +165,52 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
     }
 
+    public void setDialogue() {
 
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        alert.setTitle("Add Comment");
+
+        final EditText name = new EditText(this);
+        name.setHint("Name");
+        layout.addView(name); // Notice this is an add method
+
+        final EditText comment = new EditText(this);
+        comment.setHint("Comment");
+        layout.addView(comment); // Another add method
+
+        alert.setView(layout);
+
+        alert.setPositiveButton("Send", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String ourName = name.getText().toString();
+                String ourComment = comment.getText().toString();
+
+                int connectionStatus = ReviewerTools.getConnectivityStatus(MainActivity.this);
+
+                if (connectionStatus == ReviewerTools.TYPE_MOBILE || connectionStatus == ReviewerTools.TYPE_WIFI) {
+
+                    Intent intent = new Intent(MainActivity.this, SimpleService.class);
+                    intent.putExtra(MESSAGE, ourComment);
+                    startService(intent);
+                } else {
+                    Toast.makeText(MainActivity.this, "No internet connection!", Toast.LENGTH_LONG).show();
+                }
+                //todo send comment to ..
+
+            }
+        });
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                // no action
+            }
+        });
+
+        alert.show();
+
+    }
 }
