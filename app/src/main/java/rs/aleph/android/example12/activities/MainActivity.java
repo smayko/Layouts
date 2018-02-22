@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -49,10 +51,13 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
     DetailFragment detailFragment;
     MasterFragment masterFragment;
 
+    private SharedPreferences sharedPreferences;
+
     public static final String START_SYNC = "start sync";
     public static final String COMMENTS = "comments";
     public static final String INTERNET_CONNECTION = "internet connection";
     public static final String MESSAGE = "comment";
+    public static final String SHOW_NOTIFICATION = "show notification";
 
     // onCreate method is a lifecycle method called when he activity is starting
     @Override
@@ -98,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+
     }
 
     @Override
@@ -129,6 +137,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
                 int internetConnection = ReviewerTools.getConnectivityStatus(this);
                 Intent intent = new Intent(MainActivity.this, SimpleService.class);
                 intent.putExtra(INTERNET_CONNECTION, internetConnection);
+                intent.putExtra(SHOW_NOTIFICATION, showNotifications());
                 startService(intent);
 
 
@@ -207,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
                     Intent intent = new Intent(MainActivity.this, SimpleService.class);
                     intent.putExtra(MESSAGE, ourComment);
+                    intent.putExtra(SHOW_NOTIFICATION, showNotifications());
                     startService(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "No internet connection!", Toast.LENGTH_LONG).show();
@@ -277,5 +287,13 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
                     R.string.btn_ok);
             newFragment.show(getFragmentManager(), "dialog");
         }
+    }
+
+
+    public boolean showNotifications(){
+        boolean isShowing = false;
+        isShowing = sharedPreferences.getBoolean("show_notification", false);
+
+        return isShowing;
     }
 }
