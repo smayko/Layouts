@@ -4,13 +4,16 @@
     <string name="category">Category</string>
     <string name="sarma">Sarma</string>
     <string name="description">This dish is made of sour cabbage and minced meat, it resemble of spring rolls, but much, much tastier</string>
+    <string name="btn_ok">OK</string>
+    <string name="about">This app is developed and maintained by Smayko inc. App Version 1.0</string>
 
 
     <array name="titles">
 
+        <item> Menu</item>
+        <item> Categories</item>
         <item> Settings</item>
-        <item> Settings</item>
-        <item> Settings</item>
+        <item> About</item>
 
     </array>
 </resources>

@@ -3,9 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://C:\Users\hp-zbook-g3\AndroidStudioProjects\Layouts\.idea\Example12.iml" filepath="C:\Users\hp-zbook-g3\AndroidStudioProjects\Layouts\.idea\Example12.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Layouts.iml" filepath="$PROJECT_DIR$/Layouts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/Layouts.iml" filepath="$PROJECT_DIR$/.idea/Layouts.iml" />
       <module fileurl="file://C:\Users\hp-zbook-g3\AndroidStudioProjects\Layouts\.idea\Layouts.iml" filepath="C:\Users\hp-zbook-g3\AndroidStudioProjects\Layouts\.idea\Layouts.iml" />
+      <module fileurl="file://C:\Users\nikola.kosmajac\AndroidStudioProjects\Layouts\Layouts.iml" filepath="C:\Users\nikola.kosmajac\AndroidStudioProjects\Layouts\Layouts.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\nikola.kosmajac\AndroidStudioProjects\Layouts\app\app.iml" filepath="C:\Users\nikola.kosmajac\AndroidStudioProjects\Layouts\app\app.iml" />
     </modules>
   </component>
 </project>

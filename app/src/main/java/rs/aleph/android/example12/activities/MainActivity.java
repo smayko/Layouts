@@ -1,6 +1,9 @@
 package rs.aleph.android.example12.activities;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,6 +20,10 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
 
 
@@ -24,8 +31,10 @@ import rs.aleph.android.example12.R;
 import rs.aleph.android.example12.activities.async.SimpleBroadcast;
 import rs.aleph.android.example12.activities.async.SimpleService;
 import rs.aleph.android.example12.activities.fragments.DetailFragment;
+import rs.aleph.android.example12.activities.fragments.DialogAboutFragment;
 import rs.aleph.android.example12.activities.fragments.MasterFragment;
 import rs.aleph.android.example12.activities.tools.ReviewerTools;
+import rs.aleph.android.example12.activities.fragments.SettingFragment;
 
 // Each activity extends Activity class
 public class MainActivity extends AppCompatActivity implements MasterFragment.OurClickListener {
@@ -35,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
     int position;
     private String[] titles;
     private DrawerLayout drawerLayout;
-    private NavigationView listView;
+    private ListView listView;
 
     DetailFragment detailFragment;
     MasterFragment masterFragment;
@@ -56,8 +65,11 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
         titles = getResources().getStringArray(R.array.titles);
         drawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        listView = (NavigationView) findViewById(R.id.leftDrawer);
+        listView = (ListView) findViewById(R.id.list_left_drawer);
 
+
+        listView.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, titles));
+        listView.setOnItemClickListener(new DrawerItemClickListener());
         //      listView.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, titles));
 
         if (findViewById(R.id.detail_view) != null) {
@@ -124,8 +136,8 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
                 break;
 
             case R.id.action_delete:
-                //todo delete item
-                Toast.makeText(this, "Delete item", Toast.LENGTH_SHORT).show();
+              //todo delete item
+                Toast.makeText(this, "Delete item" , Toast.LENGTH_SHORT).show();
 
                 break;
 
