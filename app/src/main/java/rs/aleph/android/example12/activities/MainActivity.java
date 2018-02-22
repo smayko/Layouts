@@ -225,4 +225,57 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
         alert.show();
 
     }
+    class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            selectItem(i);
+        }
+
+        private void selectItem(int position) {
+            switch (position) {
+                case 0:
+                    if (findViewById(R.id.detail_view) != null) {
+                        landscape = true;
+                    }
+
+                    masterFragment = new MasterFragment();
+                    FragmentTransaction tr = getFragmentManager().beginTransaction();
+                    tr.replace(R.id.master_view, masterFragment);
+                    tr.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    tr.commit();
+
+                    detailFragment = new DetailFragment();
+
+                    detailFragment.setPosition(position);
+                    if (findViewById(R.id.detail_view) != null) {
+                        landscape = true;
+                        getFragmentManager().popBackStack();
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        ft.replace(R.id.detail_view, detailFragment, "Detail_Fragment_1");
+                        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                        ft.commit();
+                    }
+                    break;
+                case 2:
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.master_view, new SettingFragment());
+                    transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    transaction.commit();
+                    break;
+                case 3:
+                    showDialog();
+
+                    break;
+            }
+            listView.setItemChecked(position, true);
+            setTitle(titles[position]);
+            drawerLayout.closeDrawer(listView);
+
+        }
+        void showDialog() {
+            DialogFragment newFragment = DialogAboutFragment.newInstance(
+                    R.string.btn_ok);
+            newFragment.show(getFragmentManager(), "dialog");
+        }
+    }
 }
