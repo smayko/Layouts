@@ -117,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
+
+
     }
 
     @Override
