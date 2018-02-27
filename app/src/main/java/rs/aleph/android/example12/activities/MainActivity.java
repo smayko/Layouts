@@ -1,5 +1,6 @@
 package rs.aleph.android.example12.activities;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.app.Fragment;
@@ -9,12 +10,19 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -26,6 +34,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+
+import java.io.File;
+import java.util.Date;
 
 import rs.aleph.android.example12.R;
 import rs.aleph.android.example12.activities.async.SimpleBroadcast;
@@ -48,11 +59,17 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
     DetailFragment detailFragment;
     MasterFragment masterFragment;
+    SharedPreferences sharedPrefs;
 
     public static final String START_SYNC = "start sync";
     public static final String COMMENTS = "comments";
     public static final String INTERNET_CONNECTION = "internet connection";
     public static final String MESSAGE = "comment";
+    public static final String NOTIFY = "notify";
+    public static final String FILE_NAME = "new_my_practice_file.txt";
+    public static final String TAG = MainActivity.class.getName();
+
+    boolean isGetNotifications = false;
 
     // onCreate method is a lifecycle method called when he activity is starting
     @Override
@@ -98,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -124,31 +143,49 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
         switch (id) {
             case R.id.action_add:
-                //todo start service
+                //todo display file message
 
+                if (isStoragePermissionGranted()) {
+                    ReviewerTools.writeToFile(new Date().toString(), this, FILE_NAME);
+                }
+
+
+                /**
+                 * this was part of previous assignment
+                 */
+
+                getPrefs();
                 int internetConnection = ReviewerTools.getConnectivityStatus(this);
                 Intent intent = new Intent(MainActivity.this, SimpleService.class);
                 intent.putExtra(INTERNET_CONNECTION, internetConnection);
+                intent.putExtra(NOTIFY, isGetNotifications);
                 startService(intent);
 
-
-                Toast.makeText(this, "Start our Service which will start Async and then Broadcast the message", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.start_service), Toast.LENGTH_SHORT).show();
                 break;
 
+
             case R.id.action_delete:
-              //todo delete item
-                Toast.makeText(this, "Delete item" , Toast.LENGTH_SHORT).show();
+                //todo delete item
+                Toast.makeText(this, "Delete item", Toast.LENGTH_SHORT).show();
 
                 break;
 
             case R.id.action_edit:
                 //todo enter comment
-
-
+                getPrefs();
                 setDialogue();
-
                 Toast.makeText(this, "Edit item", Toast.LENGTH_SHORT).show();
+                break;
 
+            case R.id.action_search:
+               File downloadFolder =   Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+                if (ReviewerTools.isFileExists(MainActivity.this, FILE_NAME)) {
+                    Toast.makeText(this, "File Exists", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "File does NOT Exist!", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             default:
@@ -207,6 +244,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
                     Intent intent = new Intent(MainActivity.this, SimpleService.class);
                     intent.putExtra(MESSAGE, ourComment);
+                    intent.putExtra(NOTIFY, isGetNotifications);
                     startService(intent);
                 } else {
                     Toast.makeText(MainActivity.this, "No internet connection!", Toast.LENGTH_LONG).show();
@@ -225,6 +263,35 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
         alert.show();
 
     }
+
+    //get Preferences from settings menu
+    public void getPrefs() {
+        isGetNotifications = sharedPrefs.getBoolean(NOTIFY, false);
+    }
+
+    //storage permission
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED &&
+                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE)
+                            == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG, "Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG, "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG, "Permission is granted");
+            return true;
+        }
+    }
+
+
     class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -272,6 +339,7 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
             drawerLayout.closeDrawer(listView);
 
         }
+
         void showDialog() {
             DialogFragment newFragment = DialogAboutFragment.newInstance(
                     R.string.btn_ok);
