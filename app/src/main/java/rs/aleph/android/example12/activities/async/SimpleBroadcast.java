@@ -23,7 +23,7 @@ import static rs.aleph.android.example12.activities.MainActivity.START_SYNC;
 public class SimpleBroadcast extends BroadcastReceiver {
 
     private static int notificationID = 1;
-    private static int nmessageID = 1;
+    private static int nmessageID = 2;
 
 
     @Override
@@ -32,6 +32,9 @@ public class SimpleBroadcast extends BroadcastReceiver {
         if (intent.getAction().equals(START_SYNC)) {
             int connectionType = intent.getIntExtra(INTERNET_CONNECTION, 0);
             makeNotification(context, connectionType);
+
+            //todo add file to list in main activity
+            ReviewerTools.readFile(context);
         }
 
         if(intent.getAction().equals(COMMENTS)){

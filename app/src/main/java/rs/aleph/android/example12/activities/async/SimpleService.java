@@ -9,6 +9,7 @@ import rs.aleph.android.example12.activities.tools.ReviewerTools;
 
 import static rs.aleph.android.example12.activities.MainActivity.INTERNET_CONNECTION;
 import static rs.aleph.android.example12.activities.MainActivity.MESSAGE;
+import static rs.aleph.android.example12.activities.MainActivity.NOTIFY;
 
 /**
  * Created by hp-zbook-g3 on 21-Feb-18.
@@ -27,16 +28,18 @@ public class SimpleService extends Service {
 
         int connectionType = intent.getIntExtra(INTERNET_CONNECTION, 0);
         String message = intent.getStringExtra(MESSAGE);
+        boolean isNotify = intent.getBooleanExtra(NOTIFY, false);
 
-        if(connectionType == ReviewerTools.TYPE_MOBILE || connectionType == ReviewerTools.TYPE_WIFI){
-           new SimpleAsyncTask(getApplicationContext()).execute(connectionType);
+        if (isNotify) {
+            if (connectionType == ReviewerTools.TYPE_MOBILE || connectionType == ReviewerTools.TYPE_WIFI) {
+                new SimpleAsyncTask(getApplicationContext()).execute(connectionType);
+            }
+
+            if (message != null) {
+                new AsyncMessages(getApplicationContext()).execute(message);
+            }
+
         }
-
-        if(message != null){
-            new AsyncMessages(getApplicationContext()).execute(message);
-        }
-
-
         stopSelf();
 
         return START_NOT_STICKY;

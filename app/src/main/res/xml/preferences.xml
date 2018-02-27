@@ -12,10 +12,10 @@
         android:title="Change Name" />
 
     <SwitchPreference
-        android:summary="Choose dark or light theme"
-        android:title="Change App Theme" />
-
-
+        android:defaultValue="false"
+        android:key="@string/notify"
+        android:summary="@string/show_notifications"
+        android:title="@string/notifications" />
 
 
 </PreferenceScreen>

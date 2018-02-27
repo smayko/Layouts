@@ -32,7 +32,7 @@ public class SimpleAsyncTask extends AsyncTask<Integer, Void, Integer> {
     protected Integer doInBackground(Integer... params) {
 
         try {
-            Thread.sleep(4000);
+            Thread.sleep(1000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

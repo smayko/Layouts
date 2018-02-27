@@ -8,6 +8,12 @@
     <string name="about">This app is developed and maintained by Smayko inc. App Version 1.0</string>
 
 
+    <string name="show_notifications">Do you want to see notifications? </string>
+    <string name="notifications">Turn on notifications</string>
+    <string name="notify">notify</string>
+    <string name="start_service">Start our Service which will start Async and then Broadcast the message</string>
+
+
     <array name="titles">
 
         <item> Menu</item>
