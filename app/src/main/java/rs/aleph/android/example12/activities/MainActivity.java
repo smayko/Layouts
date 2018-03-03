@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.view.View;
 import android.widget.AdapterView;
@@ -35,15 +37,21 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 
+import com.j256.ormlite.android.apptools.OpenHelperManager;
+
 import java.io.File;
+import java.sql.SQLException;
 import java.util.Date;
+import java.util.List;
 
 import rs.aleph.android.example12.R;
 import rs.aleph.android.example12.activities.async.SimpleBroadcast;
 import rs.aleph.android.example12.activities.async.SimpleService;
+import rs.aleph.android.example12.activities.db.DatabaseHelper;
 import rs.aleph.android.example12.activities.fragments.DetailFragment;
 import rs.aleph.android.example12.activities.fragments.DialogAboutFragment;
 import rs.aleph.android.example12.activities.fragments.MasterFragment;
+import rs.aleph.android.example12.activities.model.Meal;
 import rs.aleph.android.example12.activities.tools.ReviewerTools;
 import rs.aleph.android.example12.activities.fragments.SettingFragment;
 
@@ -56,10 +64,13 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
     private String[] titles;
     private DrawerLayout drawerLayout;
     private ListView listView;
+    ListView listViewMeals;
 
     DetailFragment detailFragment;
     MasterFragment masterFragment;
     SharedPreferences sharedPrefs;
+    DatabaseHelper mDatabaseHelper;
+    ListAdapter adapter;
 
     public static final String START_SYNC = "start sync";
     public static final String COMMENTS = "comments";
@@ -70,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
     public static final String TAG = MainActivity.class.getName();
 
     boolean isGetNotifications = false;
+
+    private final SimpleBroadcast sync = new SimpleBroadcast();
 
     // onCreate method is a lifecycle method called when he activity is starting
     @Override
@@ -87,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
         listView.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, titles));
         listView.setOnItemClickListener(new DrawerItemClickListener());
-        //      listView.setAdapter(new ArrayAdapter<String>(this, R.layout.list_item, titles));
 
         if (findViewById(R.id.detail_view) != null) {
             landscape = true;
@@ -119,18 +131,25 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         //register BroadcastReceiver
-        SimpleBroadcast sync = new SimpleBroadcast();
+        //  SimpleBroadcast sync = new SimpleBroadcast();
         IntentFilter intentfilter = new IntentFilter();
         intentfilter.addAction(START_SYNC);
         intentfilter.addAction(COMMENTS);
         registerReceiver(sync, intentfilter);
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //      SimpleBroadcast sync = new SimpleBroadcast();
+        unregisterReceiver(sync);
     }
 
     @Override
@@ -146,25 +165,35 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
 
         switch (id) {
             case R.id.action_add:
-                //todo display file message
+                //todo open new Activity to add items to list
 
-                if (isStoragePermissionGranted()) {
-                    ReviewerTools.writeToFile(new Date().toString(), this, FILE_NAME);
-                }
+                Intent intent = new Intent(MainActivity.this, AddMealsActivity.class);
+                startActivity(intent);
 
 
                 /**
-                 * this was part of previous assignment
+                 * this was part of previous assignment for WRITING TO FILE
                  */
 
-                getPrefs();
+        /*        if (isStoragePermissionGranted()) {
+                    ReviewerTools.writeToFile(new Date().toString(), this, FILE_NAME);
+                }*/
+
+
+                /**
+                 * this was part of previous assignment for SERVICE, BROADCAST , ASYNC
+                 */
+
+             /*   getPrefs();
                 int internetConnection = ReviewerTools.getConnectivityStatus(this);
                 Intent intent = new Intent(MainActivity.this, SimpleService.class);
                 intent.putExtra(INTERNET_CONNECTION, internetConnection);
                 intent.putExtra(NOTIFY, isGetNotifications);
                 startService(intent);
 
-                Toast.makeText(this, getResources().getString(R.string.start_service), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getResources().getString(R.string.start_service), Toast.LENGTH_SHORT).show();*/
+
+
                 break;
 
 
@@ -182,13 +211,37 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
                 break;
 
             case R.id.action_search:
-               File downloadFolder =   Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+                // refresh list from DataBase
+                listViewMeals = (ListView) this.findViewById(R.id.listViewMeals);
+
+
+                List<Meal> meals = null;
+                try {
+                    meals = getDatabaseHelper().getMealDao().queryForAll();
+                    if (meals != null) {
+                        refresh(listViewMeals, meals);
+
+                    } else {
+
+                    //    ListAdapter arrayAdapter = new MasterFragment.MyArrayAdapeter(null, someArray );
+                       // listViewMeals.setAdapter(arrayAdapter);
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+
+
+                /** This was used for previous assignment to WRITE TO FILE
+                 *
+                 */
+            /*    File downloadFolder =   Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
                 if (ReviewerTools.isFileExists(MainActivity.this, FILE_NAME)) {
                     Toast.makeText(this, "File Exists", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, "File does NOT Exist!", Toast.LENGTH_SHORT).show();
-                }
+                }*/
                 break;
 
             default:
@@ -197,6 +250,31 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
         return super.onOptionsItemSelected(item);
     }
 
+    public DatabaseHelper getDatabaseHelper() {
+        if (mDatabaseHelper == null) {
+            mDatabaseHelper = OpenHelperManager.getHelper(this, DatabaseHelper.class);
+        }
+        return mDatabaseHelper;
+    }
+
+
+    private void refresh(ListView listview, List<Meal> mealList) {
+        if (listview != null) {
+            ArrayAdapter<String> adapter = (ArrayAdapter<String>) listview.getAdapter();
+            adapter = new ArrayAdapter<String>(this, R.layout.list_item);
+            listview.setAdapter(adapter);
+            if (adapter != null) {
+
+         for(int i = 0; i<mealList.size(); i++){
+             adapter.add(mealList.get(i).getTitle().toString());
+         }
+
+
+                adapter.notifyDataSetChanged();
+
+            }
+        }
+    }
     @Override
     public void clicked(int position) {
 
@@ -293,7 +371,6 @@ public class MainActivity extends AppCompatActivity implements MasterFragment.Ou
             return true;
         }
     }
-
 
     class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

@@ -65,7 +65,7 @@ public class DetailFragment extends Fragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, categories);
         spnMeals.setAdapter(adapter);
-        spnMeals.setSelection(meals.get(position).getCategory().getId());
+      //  spnMeals.setSelection(meals.get(position).getCategory().getId());
 
         tvTitle.setText(meals.get(position).getTitle());
         tvDescription.setText(meals.get(position).getDescription());
@@ -102,7 +102,7 @@ public class DetailFragment extends Fragment {
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, categories);
         spnMeals.setAdapter(adapter);
-        spnMeals.setSelection(meals.get(position).getCategory().getId());
+   //     spnMeals.setSelection(meals.get(position).getCategory().getId());
 
         tvTitle.setText(meals.get(position).getTitle());
         tvDescription.setText(meals.get(position).getDescription());

@@ -15,8 +15,8 @@ public class MealsProvider {
 
 
     public static List<Meal> getMeals(){
-        Category category = new Category("Domestic food", null);
-        Category category2 = new Category("Hungarian food", null);
+        Category category = new Category(1, "Domestic food" );
+        Category category2 = new Category(2,"Hungarian food" );
 
         List<Meal> meals = new ArrayList<>();
         meals.add(new Meal(0, "Sarma" , category, "nice food", "cabbage, meat", 600, 399.99));

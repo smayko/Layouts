@@ -23,8 +23,8 @@ public class MealProvider {
 
    public static List<Meal> getMeals(){
 
-       Category cat = new Category(0, "Serbian food", null);
-       Category cat2 = new Category(1, "Hungarian food", null);
+       Category cat = new Category(0, "Serbian food");
+       Category cat2 = new Category(1, "Hungarian food");
 
        List<Meal> meals = new ArrayList<>();
        Meal meal = new Meal(0, "Sarma", cat, "Beautiful sour cabbage food described", "cabbage, meat", 400, 350.99, "sarma.png");

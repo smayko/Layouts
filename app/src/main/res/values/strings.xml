@@ -14,6 +14,13 @@
     <string name="start_service">Start our Service which will start Async and then Broadcast the message</string>
 
 
+
+
+    <!-- ADD MENU ACTIVITY -->
+    <string name="add_meal">Choose Meal to add to menu</string>
+    <string name="add">Add</string>
+
+
     <array name="titles">
 
         <item> Menu</item>

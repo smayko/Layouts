@@ -1,18 +1,42 @@
 package rs.aleph.android.example12.activities.model;
 
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
+import com.j256.ormlite.table.DatabaseTable;
+
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * Created by hp-zbook-g3 on 29-Jan-18.
  */
 
+
+@DatabaseTable(tableName = Category.TABLE_NAME_CATEGORIES)
 public class Category {
 
-    private int id;
-    private String name;
-    private ArrayList<Meal> meals;
+    public static final String TABLE_NAME_CATEGORIES = "category";
 
-    public Category(String s, Object o) {
+    public static final String COLUMN_NAME_ID = "id";
+    public static final String COLUMN_NAME_CATEGORY_NAME = "category_name";
+    public static final String COLUMN_NAME_MEALS = "meals";
+
+
+    @DatabaseField(columnName = COLUMN_NAME_ID, generatedId = true)
+    private int id;
+
+    @DatabaseField(columnName = COLUMN_NAME_CATEGORY_NAME)
+    private String name;
+
+    @ForeignCollectionField(columnName = COLUMN_NAME_MEALS)
+    private Collection<Meal> meals;
+
+    public Category(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public Category() {
     }
 
     public Category(int id, String name, ArrayList<Meal> meals) {
@@ -29,11 +53,11 @@ public class Category {
         this.name = name;
     }
 
-    public ArrayList<Meal> getMeals() {
+    public Collection<Meal> getMeals() {
         return meals;
     }
 
-    public void setMeals(ArrayList<Meal> meals) {
+    public void setMeals(Collection<Meal> meals) {
         this.meals = meals;
     }
 
